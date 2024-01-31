@@ -2,6 +2,10 @@ from psychopy import visual, core, event
 import os, time
 import numpy as np
 
+# Modify these globals to change the max lenght of the videos
+MAX_VIDEO_LENGTH = 40 # in seconds
+REFRESH_RATE = 60
+
 # Create a window
 win = visual.Window(size=(800, 600), monitor='testMonitor', color='black')
 
@@ -15,7 +19,8 @@ video_timestamps = np.empty((100, 2))
 video_timestamps[:] = np.nan
 
 # Specify the path to your movie file
-movie_path = "/Users/benfalken/Desktop/VN_Videos/"
+#movie_path = os.path.join(os.path.dirname(__file__), "Videos")
+movie_path = "/Users/ethan/Desktop/Code/ntx_project/Videos/"
 movies = os.listdir(movie_path)
 
 for movie_idx in range(len(movies)):
@@ -30,7 +35,7 @@ for movie_idx in range(len(movies)):
 	video_timestamps[movie_idx][0] = time.time()
 
 	# Run the movie until a key is pressed or the movie ends
-	while not event.getKeys() and movie.status != visual.FINISHED and time_elapsed < 200:
+	while not event.getKeys() and movie.status != visual.FINISHED and time_elapsed < MAX_VIDEO_LENGTH * REFRESH_RATE:
 	    movie.draw()
 	    win.flip()
 	    time_elapsed += 1
