@@ -18,8 +18,7 @@ video_timestamps = np.empty((100, 2))
 video_timestamps[:] = np.nan
 
 # Specify the path to your movie file
-movie_path = os.path.join(os.path.dirname(__file__), "Videos/")
-#movie_path = "/Users/ethan/Desktop/Code/ntx_project/Videos/"
+movie_path = os.path.join(os.path.dirname(__file__), "Videos/") ## Place video files in a folder called "Videos" in the ntx_project folder
 movies = os.listdir(movie_path)
 
 for movie_idx in range(len(movies)):
