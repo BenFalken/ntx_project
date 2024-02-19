@@ -1,5 +1,5 @@
-PERSONALIZED = 1
-CORE = 2
+PERSONALIZED = 0
+CORE = 19
 EXPANDED = 0
 
 PID = "03"
@@ -51,6 +51,8 @@ stim.draw()
 win.flip()
 event.waitKeys()
 
+breakOut = False
+
 for movie_idx in range(len(movies)):
 	exit_trial = False
 	movie = movies[movie_idx]
@@ -96,7 +98,8 @@ for movie_idx in range(len(movies)):
 		for key in keys:
 			if key == 'escape':
 				win.close()
-				core.quit()
+				breakOut = True
+				break
 
 			elif key == 'space':
 				print('Completed video #'+ str(movie_idx+1))
@@ -106,6 +109,8 @@ for movie_idx in range(len(movies)):
 				break
 		if 'escape' in keys or 'space' in keys:
 			break
+	if breakOut:
+		break
 
 win.close()
 # pkl.dump(video_timestamps, open('video_timestamps', 'wb'))
