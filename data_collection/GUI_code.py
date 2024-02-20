@@ -1,13 +1,13 @@
-PERSONALIZED = 1
-CORE = 2
+PERSONALIZED = 6
+CORE = 17
 EXPANDED = 0
 
-PID = "03"
-NAME = "Steven_test2"
+PID = "09"
+NAME = "Ethan"
 TRIAL_TYPE = "Core"
 
 # Modify these globals to change the max length of the videos
-MAX_VIDEO_LENGTH = 20 # in seconds
+MAX_VIDEO_LENGTH = 90 # in seconds
 FPS = 60
 
 from psychopy import visual, core, event
@@ -50,6 +50,8 @@ if len(movies) != PERSONALIZED + CORE + EXPANDED:
 stim.draw()
 win.flip()
 event.waitKeys()
+
+breakOut = False
 
 for movie_idx in range(len(movies)):
 	exit_trial = False
@@ -96,7 +98,8 @@ for movie_idx in range(len(movies)):
 		for key in keys:
 			if key == 'escape':
 				win.close()
-				core.quit()
+				breakOut = True
+				break
 
 			elif key == 'space':
 				print('Completed video #'+ str(movie_idx+1))
@@ -106,11 +109,13 @@ for movie_idx in range(len(movies)):
 				break
 		if 'escape' in keys or 'space' in keys:
 			break
+	if breakOut:
+		break
 
 win.close()
 # pkl.dump(video_timestamps, open('video_timestamps', 'wb'))
-# np.savetxt("video_timestamps_PID_{}_{}_{}.csv".format(PID, NAME, TRIAL_TYPE), video_timestamps, delimiter=",")
-csv_file = 'video_timestamps.csv'
-with open(csv_file, 'w', newline='') as file:
-    writer = csv.writer(file)
-    writer.writerow(video_timestamps)
+np.savetxt("video_timestamps_PID_{}_{}_{}.csv".format(PID, NAME, TRIAL_TYPE), video_timestamps, delimiter=",")
+# csv_file = 'video_timestamps.csv'
+# with open(csv_file, 'w', newline='') as file:
+#     writer = csv.writer(file)
+#     writer.writerow(video_timestamps)
