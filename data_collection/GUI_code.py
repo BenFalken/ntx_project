@@ -1,5 +1,5 @@
-PERSONALIZED = 6
-CORE = 17
+PERSONALIZED = 5
+CORE = 0
 EXPANDED = 0
 
 PID = "09"
@@ -15,8 +15,6 @@ import os, time
 import numpy as np
 import pickle as pkl
 import csv
-
-start_time = time.time()
 
 # Create a window
 win = visual.Window(size=(1000,800), monitor='testMonitor', color='black')
@@ -75,7 +73,7 @@ for movie_idx in range(len(movies)):
 
 	# Start the movie playback
 	movie.play()
-	video_timestamps[movie_idx][0] = time.time() - start_time
+	video_timestamps[movie_idx][0] = time.time()
 
 	# Run the movie until ESC key is pressed or the movie ends
 	while not exit_trial and movie.status != visual.FINISHED and time_elapsed < MAX_VIDEO_LENGTH * FPS:
@@ -87,7 +85,7 @@ for movie_idx in range(len(movies)):
 
 	# Record the end time of the movie and load the questionnaire screen
 	movie.stop()
-	video_timestamps[movie_idx][1] = time.time() - start_time
+	video_timestamps[movie_idx][1] = time.time()
 	questionnaire_text.draw()
 	win.flip()
 
