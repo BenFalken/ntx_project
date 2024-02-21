@@ -1,4 +1,4 @@
-from StaticVariables import SCALE_FACTOR_EEG, gain_code, com_port
+from StaticVariables import SCALE_FACTOR_EEG, gain_code, com_port, n_channels, daisy_used
 
 import time
 import numpy as np
@@ -38,7 +38,7 @@ def Start():
 
             if stream_outlet is not None:
                 # send shutdown signal to any consumers of this outlet
-                data_packager_shutdown_signal = np.empty(9)
+                data_packager_shutdown_signal = np.empty(n_channels+1) # ???
 
                 # wait for consumers to disconnect
                 while stream_outlet.have_consumers():
@@ -69,13 +69,13 @@ def Start():
 
     def Run():
         # most recent EEG sample from Cyton
-        current_sample_EEG = np.zeros((1,8))
+        current_sample_EEG = np.zeros((1,n_channels))
 
         # most recent trigger sample from Cyton
         current_sample_trigger = np.zeros(2)
 
         chunk_ind = 0
-        chunk = np.zeros((500,10))
+        chunk = np.zeros((500,n_channels+2))
 
         def package_sample(sample):
             nonlocal current_sample_EEG, current_sample_trigger, chunk_ind
@@ -93,9 +93,9 @@ def Start():
             current_sample_trigger[1] = not(pins%2)
 
             # append formatted sample to chunk
-            res = np.zeros(10)
-            res[0:8] = current_sample_EEG
-            res[8:] = current_sample_trigger
+            res = np.zeros(n_channels+2)
+            res[0:n_channels] = current_sample_EEG
+            res[n_channels:] = current_sample_trigger
             chunk[chunk_ind,:] = res
 
             # increment chunk index and see if it's time to send chunk
@@ -114,7 +114,7 @@ def Start():
     try:
         # connect to bluetooth dongle on COM port
         print("Connecting to Cyton...")
-        cyton = OpenBCICyton(port=com_port)
+        cyton = OpenBCICyton(port=com_port, daisy=daisy_used)
 
         # configure board into digital read mode
         print("Configuring Cyton...")
@@ -132,7 +132,7 @@ def Start():
 
         # initialize LSL stream
         print("Opening EEG outlet...")
-        stream_info = StreamInfo("Packaged_EEG", "Packaged_EEG", 10, 250, "float32", "CytonDataPackager")
+        stream_info = StreamInfo("Packaged_EEG", "Packaged_EEG", n_channels+2, 250, "float32", "CytonDataPackager")
         stream_outlet = StreamOutlet(stream_info)
         print("EEG outlet opened.")
 
