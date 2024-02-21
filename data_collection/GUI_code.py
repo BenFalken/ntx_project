@@ -18,8 +18,11 @@ import csv
 
 start_time = time.time()
 
+win_width=1200
+win_height=800
+
 # Create a window
-win = visual.Window(size=(1000,800), monitor='testMonitor', color='black')
+win = visual.Window(size=(win_width,win_height), monitor='testMonitor', color='black')
 color = (130, 180, 230)
 width = 2
 
@@ -58,21 +61,8 @@ for movie_idx in range(len(movies)):
 	movie = movies[movie_idx]
 	time_elapsed = 0
 
-	#set movie dimensions
-
-	# movie = visual.MovieStim3(win, filename=movie_path+movie, flipVert=False, flipHoriz=False, loop=False)
-	# video_width, video_height = movie.getMovieFrameSize()
-	# window_width, window_height = win.size
-	# width_scale = window_width / video_width
-	# height_scale = window_height / video_height
-	# scale_factor = min(width_scale, height_scale)
-	# scaled_width = int(video_width * scale_factor)
-	# scaled_height = int(video_height * scale_factor)
-	# pos = (0,0)
-
-	movie = visual.MovieStim3(win, filename=movie_path+movie, flipVert=False, flipHoriz=False, loop=False)
-
-
+	movie = visual.MovieStim(win, filename=movie_path+movie, size=None, flipVert=False, flipHoriz=False, loop=False)
+	movie.pos = (0, 0)
 	# Start the movie playback
 	movie.play()
 	video_timestamps[movie_idx][0] = time.time() - start_time
