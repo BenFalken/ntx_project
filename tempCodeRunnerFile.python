@@ -1,0 +1,51 @@
+import tkinter as tk
+from pylsl import StreamInlet, resolve_stream
+import numpy as np
+from scipy.signal import welch
+
+# Parameters
+CHANNELS = 8
+SAMPLING_RATE = 256
+EYES_CLOSED_THRESHOLD = 1.5  # This threshold might need adjustment
+
+def analyze_alpha_power(data):
+    """Analyze alpha band power and return average power across channels."""
+    freqs, psd = welch(data, SAMPLING_RATE, nperseg=4*SAMPLING_RATE)
+    alpha_band = (freqs >= 8) & (freqs <= 13)
+    alpha_power = psd[:, alpha_band].mean(axis=1)
+    return alpha_power.mean()
+
+def update_gui(window, label, alpha_power):
+    """Update the GUI based on alpha power."""
+    status = "Eyes Closed" if alpha_power > EYES_CLOSED_THRESHOLD else "Eyes Open"
+    label.config(text=status)
+    window.after(1000, lambda: label.config(text="Analyzing..."))  # Reset text after 1 second
+
+def stream_data():
+    """Stream data from OpenBCI and analyze alpha band power."""
+    print("Looking for an EEG stream...")
+    streams = resolve_stream('type', 'EEG')
+    
+    inlet = StreamInlet(streams[0])
+    print("Stream found and connected!")
+
+    # Set up Tkinter GUI
+    window = tk.Tk()
+    window.title("Eyes Closed/Open Detector")
+    label = tk.Label(window, text="Analyzing...", font=('Arial', 24))
+    label.pack(pady=20)
+
+    def process_data():
+        buffer = np.empty((CHANNELS, SAMPLING_RATE * 2))  # 2 seconds of data
+        for i in range(SAMPLING_RATE * 2):
+            sample, timestamp = inlet.pull_sample()
+            buffer[:, i] = sample[:CHANNELS]
+        alpha_power = analyze_alpha_power(buffer.T)
+        update_gui(window, label, alpha_power)
+        window.after(100, process_data)  # Update every 100 ms
+
+    window.after(1000, process_data)  # Start processing after 1 second
+    window.mainloop()
+
+if __name__ == "__main__":
+    stream_data()
