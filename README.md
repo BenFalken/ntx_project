@@ -1,6 +1,6 @@
 # How to Collect Data (as of 3/1/24)
 1. Have two computers (call them A and B)
-2. Connect the OpenBCI headset to connect to computer A following this [OpenBCI Tutorial](https://docs.google.com/document/d/1t7J3HIWkAL-0ryzGdOWXVq6LT_B7E0RlaZHDBdEPonE/edit)https://docs.google.com/document/d/1t7J3HIWkAL-0ryzGdOWXVq6LT_B7E0RlaZHDBdEPonE/edit)
+2. Connect the OpenBCI headset to connect to computer A following this [OpenBCI Tutorial](https://docs.google.com/document/d/1t7J3HIWkAL-0ryzGdOWXVq6LT_B7E0RlaZHDBdEPonE/edit)
 3. Connect these electrodes:
 	1. GND/REF
 	2. CH1 (gray) - C3
