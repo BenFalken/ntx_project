@@ -21,3 +21,4 @@
 9. Start recording EEG data in OpenBCI GUI on computer A
 10. Open and run GUI_code.py in the ntx_project/data_collection folder on computer B
 11. Participant should now be watching the videos on computer B while EEG data is being recorded on computer A. In between the videos, have them fill out the Google form question for that particular video on computer B
+12. When the participant has gone through all the videos, stop the data recording on OpenBCI GUI and upload the data (it saves it in User/Documents/OpenBCI_GUI/Recordings by default) to [EEG Data Google folder](https://drive.google.com/drive/u/4/folders/1t2ojmeJQUX4dkLSUQ174-I80VX6uHoQK). The GUI_code should have also made a video_timestamps_PID_... file, which you should commit and push to the GitHub repo
