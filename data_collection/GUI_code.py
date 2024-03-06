@@ -16,6 +16,43 @@ import numpy as np
 import pickle as pkl
 import csv
 from videoprops import get_video_properties
+import random
+
+## Doesn't work yet
+# Function to reorder movies as per the requirements
+def reorder_movies(movies):
+    # Extracting core and participant movies
+    core_movies = [movie for movie in movies if "_core_" in movie]
+    participant_movies = [movie for movie in movies if "_core_" not in movie]
+    neutral_movies = [movie for movie in movies if "neutral_core" in movie]
+
+    # Identifying unique emotions (excluding 'neutral')
+    emotions = sorted(list(set([movie.split("_")[0] for movie in core_movies])))
+
+    # Shuffle emotions
+    random.shuffle(emotions)
+
+    # Preparing the final ordered list
+    ordered_movies = []
+    neutral_index = 0
+
+    for emotion in emotions:
+        emotion_core_movies = [
+            movie for movie in core_movies if movie.startswith(emotion)
+        ]
+        emotion_participant_movie = [
+            movie for movie in participant_movies if movie.endswith(emotion)
+        ]
+
+        # Adding core movies and participant movie in the specified order
+        ordered_movies.extend(emotion_core_movies + emotion_participant_movie)
+
+        # Add neutral movie(s) according to emotion order, if available
+        if neutral_index < len(neutral_movies):
+            ordered_movies.append(neutral_movies[neutral_index])
+            neutral_index += 1
+
+    return ordered_movies
 
 start_time = time.time()
 
@@ -44,6 +81,7 @@ video_timestamps[:] = np.nan
 movie_path = os.path.join(os.path.dirname(__file__), "Videos/") ## Place video files in a folder called "Videos" in the ntx_project folder
 
 movies = os.listdir(movie_path)
+#movies = reorder_movies(movies)
 
 # check to make sure the number of movies is equal to the number of timestamps
 if len(movies) != PERSONALIZED + CORE + EXPANDED:
