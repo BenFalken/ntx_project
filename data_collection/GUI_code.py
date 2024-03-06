@@ -15,6 +15,7 @@ import os, time
 import numpy as np
 import pickle as pkl
 import csv
+from videoprops import get_video_properties
 
 start_time = time.time()
 
@@ -61,7 +62,14 @@ for movie_idx in range(len(movies)):
 	movie = movies[movie_idx]
 	time_elapsed = 0
 
-	movie = visual.MovieStim(win, filename=movie_path+movie, size=None, flipVert=False, flipHoriz=False, loop=False)
+	props = get_video_properties(movie_path+movie)
+
+	width, height = props['display_aspect_ratio'].split(":")
+	width, height = int(width), int(height)
+	width_multiplier = win_height/height
+
+
+	movie = visual.MovieStim(win, filename=movie_path+movie, size=(width_multiplier*width, win_height), flipVert=False, flipHoriz=False, loop=False)
 	movie.pos = (0, 0)
 	# Start the movie playback
 	movie.play()
