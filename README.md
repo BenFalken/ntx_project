@@ -16,7 +16,7 @@
 5. On computer B, download the core videos from the [core videos Google folder](https://drive.google.com/drive/u/4/folders/1S_godbS0hgS7s1HXCP3pEBIY3kTHCRBT) and personalized videos for the particular participant in the [videos Google folder](https://drive.google.com/drive/u/4/folders/1try2zBZe23IJKfLDlCuc-OsLTiF9RCjJ)
 6. If you haven't already, clone the [ntx_project Github repo](https://github.com/BenFalken/ntx_project/) on computer B
 	1. I recommend downloading and using the [Github Desktop](https://desktop.github.com/) app for ease of committing/syncing/branching/cloning
- 	2. To clone using Github Desktop, follow this [Yotuube tutorial](https://www.youtube.com/watch?v=PoZNIbs_wx8)
+ 	2. To clone using Github Desktop, follow this [Yotube tutorial](https://www.youtube.com/watch?v=PoZNIbs_wx8)
 7. Place all the videos in a folder called "Videos" in ntx_project/data_collection
 	1. This will allow the code to play the videos
 8. Have the participant put on the headset and inject gel
