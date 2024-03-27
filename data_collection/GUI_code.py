@@ -1,10 +1,10 @@
-PERSONALIZED = 5
-CORE = 0
-EXPANDED = 0
-
 PID = "09"
 NAME = "Ethan"
 TRIAL_TYPE = "Core"
+
+CONTINUE_KEY = "space"
+SKIP_KEY = "s"
+EXIT_KEY = "escape"
 
 # Modify these globals to change the max length of the videos
 MAX_VIDEO_LENGTH = 90 # in seconds
@@ -18,7 +18,6 @@ import csv
 from videoprops import get_video_properties
 import random
 
-## Doesn't work yet
 # Function to reorder movies as per the requirements
 def reorder_movies(movies):
     # Extracting core and participant movies
@@ -28,11 +27,12 @@ def reorder_movies(movies):
 
     # Identifying unique emotions (excluding 'neutral')
     emotions = sorted(list(set([movie.split("_")[0] for movie in core_movies])))
+    emotions.remove("neutral")
 
     # Shuffle emotions
     random.shuffle(emotions)
 
-    # Preparing the final ordered list
+	# Preparing the final ordered list
     ordered_movies = []
     neutral_index = 0
 
@@ -54,39 +54,40 @@ def reorder_movies(movies):
 
     return ordered_movies
 
-start_time = time.time()
-
-win_width=1200
-win_height=800
-
-# Create a window
-win = visual.Window(size=(win_width,win_height), monitor='testMonitor', color='black')
-color = (130, 180, 230)
-width = 2
-
-# Define the two screens ([stim] and [questionnaire_text]) we'll be using during GUI operation
-stim = visual.TextStim(win, 'Click any key to continue. \n The video may take a moment to start.', wrapWidth=width)
-stim.colorSpace = 'rgb255'
-stim.color = color
-
-questionnaire_text = visual.TextStim(win, 'Please fill out the questionnaire. \n When you are finished press the space bar to continue. \n The video may take a moment to start.\n \n Press ESC to end the trial.', wrapWidth=width)
-questionnaire_text.colorSpace = 'rgb255'
-questionnaire_text.color = color
-
-#define array containing start and end times of each video clip
-video_timestamps = np.empty((PERSONALIZED + CORE + EXPANDED, 2))
-video_timestamps[:] = np.nan
-
 # Specify the path to your movie file
 movie_path = os.path.join(os.path.dirname(__file__), "Videos/") ## Place video files in a folder called "Videos" in the ntx_project folder
 
 movies = os.listdir(movie_path)
-#movies = reorder_movies(movies)
+movies = reorder_movies(movies)
 
-# check to make sure the number of movies is equal to the number of timestamps
-if len(movies) != PERSONALIZED + CORE + EXPANDED:
-	print("Different number of movies and timestamps!")
-	exit(1)
+# define array containing start and end times of each video clip
+video_timestamps = np.empty((len(movies), 2))
+video_timestamps[:] = np.nan
+
+win_width = 1200
+win_height = 800
+
+# Create a window
+win = visual.Window(size=(win_width, win_height), monitor="testMonitor", color="black")
+color = (130, 180, 230)
+width = 2
+
+# Define the two screens ([stim] and [questionnaire_text]) we'll be using during GUI operation
+stim = visual.TextStim(
+    win,
+    "Press any key to continue. \n The video may take a moment to start.",
+    wrapWidth=width,
+)
+stim.colorSpace = "rgb255"
+stim.color = color
+
+questionnaire_text = visual.TextStim(
+    win,
+    "Please fill out the questionnaire. \n When you are finished press the space bar to continue. \n The video may take a moment to start.\n \n Press ESC to end the trial.",
+    wrapWidth=width,
+)
+questionnaire_text.colorSpace = "rgb255"
+questionnaire_text.color = color
 
 #Draw the [stim] screen
 stim.draw()
@@ -115,7 +116,7 @@ for movie_idx in range(len(movies)):
 
 	# Run the movie until ESC key is pressed or the movie ends
 	while not exit_trial and movie.status != visual.FINISHED and time_elapsed < MAX_VIDEO_LENGTH * FPS:
-		if event.getKeys(keyList=['escape']):
+		if event.getKeys(keyList=[SKIP_KEY]):
 			exit_trial=True
 		movie.draw()
 		win.flip()
@@ -132,25 +133,21 @@ for movie_idx in range(len(movies)):
 		event.clearEvents()
 		keys = event.getKeys()
 		for key in keys:
-			if key == 'escape':
+			if key == EXIT_KEY:
 				win.close()
 				breakOut = True
 				break
-
-			elif key == 'space':
+			elif key == CONTINUE_KEY:
 				print('Completed video #'+ str(movie_idx+1))
-				# if movie_idx == len(movies) - 1:
-				# 	win.close()
-				# 	core.quit()
 				break
-		if 'escape' in keys or 'space' in keys:
+		if EXIT_KEY in keys or 'space' in keys:
 			break
 	if breakOut:
 		break
 
 win.close()
-# pkl.dump(video_timestamps, open('video_timestamps', 'wb'))
 np.savetxt("video_timestamps_PID_{}_{}_{}.csv".format(PID, NAME, TRIAL_TYPE), video_timestamps, delimiter=",")
+core.quit()
 # csv_file = 'video_timestamps.csv'
 # with open(csv_file, 'w', newline='') as file:
 #     writer = csv.writer(file)
