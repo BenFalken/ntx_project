@@ -8,7 +8,7 @@ EXIT_KEY = "escape"
 
 # Modify these globals to change the max length of the videos
 MAX_VIDEO_LENGTH = 90 # in seconds
-FPS = 60
+FPS = 30
 
 from psychopy import visual, core, event
 import os, time
@@ -41,9 +41,8 @@ def reorder_movies(movies):
             movie for movie in core_movies if movie.startswith(emotion)
         ]
         emotion_participant_movie = [
-            movie for movie in participant_movies if movie.endswith(emotion)
+            movie for movie in participant_movies if movie.endswith(emotion + ".mp4")
         ]
-
         # Adding core movies and participant movie in the specified order
         ordered_movies.extend(emotion_core_movies + emotion_participant_movie)
 
@@ -146,9 +145,4 @@ for movie_idx in range(len(movies)):
 		break
 
 win.close()
-np.savetxt("video_timestamps_PID_{}_{}_{}.csv".format(PID, NAME, TRIAL_TYPE), video_timestamps, delimiter=",")
-core.quit()
-# csv_file = 'video_timestamps.csv'
-# with open(csv_file, 'w', newline='') as file:
-#     writer = csv.writer(file)
-#     writer.writerow(video_timestamps)
+np.savetxt("data_collection/Data/video_timestamps_PID_{}_{}_{}.csv".format(PID, NAME, TRIAL_TYPE), video_timestamps, delimiter=",")
