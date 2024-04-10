@@ -1,5 +1,3 @@
-## WORK IN PROGRESS - ETHAN
-
 import pandas as pd
 import os
 
@@ -7,7 +5,8 @@ import os
 pids = [1, 2, 3]  # Example participant IDs
 
 # Path to the data directory relative to this script
-data_dir = "../data_collection/eeg-data/"
+data_dir = "../data_analysis/eeg-data/"
+timestamps_dir = "../data_collection/Data/"
 
 # Initialize an empty list to store the cropped EEG data arrays
 cropped_eeg_data = []
