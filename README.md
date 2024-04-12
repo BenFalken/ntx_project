@@ -17,10 +17,33 @@
 5. Open the [Emotions (Core) Google form](https://docs.google.com/forms/d/1aDTQFd7sgwAe5aftb-0PMRY1PHD_xGIRps1IsHuxMGY/) on computer B
 6. On computer B, download the core videos from the [core videos Google folder](https://drive.google.com/drive/u/4/folders/1S_godbS0hgS7s1HXCP3pEBIY3kTHCRBT) and personalized videos for the particular participant in the [videos Google folder](https://drive.google.com/drive/u/4/folders/1try2zBZe23IJKfLDlCuc-OsLTiF9RCjJ)
 7. If you haven't already, clone the [ntx_project Github repo](https://github.com/BenFalken/ntx_project/) on computer B
-	1. I recommend downloading and using the [Github Desktop](https://desktop.github.com/) app for ease of committing/syncing/branching/cloning
+	1. It's recommended to download and use the [Github Desktop](https://desktop.github.com/) app for ease of committing/syncing/branching/cloning
  	2. To clone using Github Desktop, follow this [Yotube tutorial](https://www.youtube.com/watch?v=PoZNIbs_wx8)
 8. Place all the videos in a folder called "Videos" in ntx_project/data_collection
-	1. This will allow the code to play the videos
+	1. The videos need to be labeled as so (replace # with the PID number):
+	* #_amusement.mp4
+	* #_anger.mp4
+	* #_contentment.mp4
+	* #_disgust.mp4
+	* #_fear.mp4
+	* #_sadness.mp4
+	* amusement_core_1.mp4
+	* amusement_core_2.mp4
+	* anger_core_1.mp4
+	* anger_core_2.mp4
+	* contentment_core_1.mp4
+	* contentment_core_2.mp4
+	* disgust_core_1.mp4
+	* disgust_core_2.mp4
+	* fear_core_1.mp4
+	* fear_core_2.mp4
+	* neutral_core_1.mp4
+	* neutral_core_2.mp4
+	* neutral_core_3.mp4
+	* neutral_core_4.mp4
+	* neutral_core_5.mp4
+	* sadness_core_1.mp4
+	* sadness_core_2.mp4
 9. Have the participant put on the headset and inject gel
 10. Start recording EEG data in OpenBCI GUI on computer A
 11. Open and run GUI_code.py in the ntx_project/data_collection folder on computer B using PsychoPy (specifically the editor)
