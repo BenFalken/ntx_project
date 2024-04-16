@@ -3,7 +3,9 @@ import pandas as pd
 
 number_videos = 24
 
-df = pd.read_csv("C:/ntx_project/data_analysis/Emotions! (Core) (Responses) - Form Responses 1.csv")
+df = pd.read_csv("/Users/ethan/Desktop/Emotions! (Core) (Responses) - Form Responses 1.csv")
+
+print(df.iloc[0,0])
 
 number_subjects = df.shape[0]
 
