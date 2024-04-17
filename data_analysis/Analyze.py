@@ -39,17 +39,21 @@ import pandas as pd
 
 # Constants
 N = 750  # Number of samples for 3 seconds at 250 Hz
-number_videos = 24
 sampling_rate = 250  # Hz
-
+subject_id = 6
 # Paths
+
 eeg_data_folder = "eeg-data"
 timestamp_data_folder = "timestamp-data"
 emotion_data_folder = "emotion-data"
 emotion_responses_filename = "Emotions! (Core) (Responses) - Form Responses 1.csv"
 
 # Read the emotion and VAD data
-emotion_df = pd.read_csv(os.path.join(emotion_data_folder, emotion_responses_filename))
+emotion_df = pd.read_csv(
+    os.path.join(
+        os.path.dirname(__file__), emotion_data_folder, emotion_responses_filename
+    )
+)
 number_subjects = emotion_df.shape[0]
 
 # Initialize arrays
@@ -61,34 +65,38 @@ def binarize_vad(data):
     return 1 if data >= 5 else 0
 
 # Process each subject and trial
-for subject_id in range(1, number_subjects + 1):
-    for trial_number in range(1, number_videos + 1):
-        # EEG data file path
-        eeg_file = f"PID_{subject_id}_eeg_data_{trial_number}.csv"
-        eeg_file_path = os.path.join(eeg_data_folder, eeg_file)
+trial_number = 1
+while True:
+    # EEG data file path
+    eeg_file = f"PID_0{subject_id}_eeg_data_{trial_number}.txt"
+    eeg_file_path = os.path.join(eeg_data_folder, eeg_file)
 
-        # Read EEG data
-        eeg_df = pd.read_csv(eeg_file_path, skiprows=5, usecols=['B','C','D','E','F','G','H','I','AE'])
-        
-        # Timestamp data file path
-        timestamps_file = f"video_timestamps_PID_{subject_id}_Sandra_{trial_number}.csv"
-        timestamps_file_path = os.path.join(timestamp_data_folder, timestamps_file)
-        
-        # Read timestamp data
-        timestamps_df = pd.read_csv(timestamps_file_path, header=None)
+    # Read EEG data
+    eeg_df = pd.read_csv(
+        os.path.join(os.path.dirname(__file__), eeg_file_path),
+        skiprows=5,
+        header=None,
+        usecols=[1, 2, 3, 4, 5, 6, 7, 8, 30],
+    )  # Indices for B-I and AE assuming A starts at index 0
 
-        # For each video, get the EEG data corresponding to the video duration
-        for index, row in timestamps_df.iterrows():
-            start_time, end_time = row
-            chunk_mask = (eeg_df['AE'] >= start_time) & (eeg_df['AE'] <= end_time)
-            chunk_data = eeg_df[chunk_mask].iloc[:N, :8].to_numpy()
-
-            if chunk_data.shape[0] == N:  # Ensure we have a full 3-second chunk
-                X.append(chunk_data)
-                y1.append(binarize_vad(emotion_df.iloc[subject_id, trial_number * 4 - 3]))  # valence
-                y2.append(binarize_vad(emotion_df.iloc[subject_id, trial_number * 4 - 2]))  # arousal
-                y3.append(binarize_vad(emotion_df.iloc[subject_id, trial_number * 4 - 1]))  # dominance
-                y4.append(emotion_df.iloc[subject_id, trial_number * 4])  # emotion label
+    # Timestamp data file path
+    timestamps_file = f"{os.path.dirname(__file__)}/{timestamp_data_folder}/video_timestamps_PID_0{subject_id}_Sandra_{trial_number}.csv"
+    timestamps_file_path = os.path.join(timestamp_data_folder, timestamps_file)
+    
+    # Read timestamp data
+    timestamps_df = pd.read_csv(timestamps_file_path, header=None)
+    # For each video, get the EEG data corresponding to the video duration
+    for index, row in timestamps_df.iterrows():
+        start_time, end_time = row
+        chunk_mask = (eeg_df[30] >= start_time) & (eeg_df[30] <= end_time)
+        chunk_data = eeg_df[chunk_mask].iloc[:N, :8].to_numpy()
+        if chunk_data.shape[0] == N:  # Ensure we have a full 3-second chunk
+            X.append(chunk_data)
+            y1.append(binarize_vad(emotion_df.iloc[subject_id, trial_number * 4 - 3]))  # valence
+            y2.append(binarize_vad(emotion_df.iloc[subject_id, trial_number * 4 - 2]))  # arousal
+            y3.append(binarize_vad(emotion_df.iloc[subject_id, trial_number * 4 - 1]))  # dominance
+            y4.append(emotion_df.iloc[subject_id, trial_number * 4])  # emotion label
+    trial_number += 1
 
 # Convert lists to numpy arrays
 X = np.array(X)
@@ -96,5 +104,3 @@ y1 = np.array(y1)
 y2 = np.array(y2)
 y3 = np.array(y3)
 y4 = np.array(y4)
-
-# At this point, X is an array of EEG chunks, and y1, y2, y3, and y4 are the corresponding labels
