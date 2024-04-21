@@ -6,4 +6,6 @@
 *.flv
 *.mkv
 *.webm
+*.DS_Store
 data_analysis/eeg-data/
+venv
