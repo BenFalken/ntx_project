@@ -19,7 +19,6 @@ emotion_df = pd.read_csv(
         os.path.dirname(__file__), emotion_data_folder, emotion_responses_filename
     )
 )
-number_subjects = emotion_df.shape[0]
 
 # Initialize arrays
 X = []
@@ -30,7 +29,7 @@ def binarize_vad(data):
     return 1 if data >= 5 else 0
 
 # Process each subject and trial
-trial_number = 2
+trial_number = 3
 while True:
     # EEG data file path
     eeg_file = f"PID_0{subject_id}_eeg_data_{trial_number}.txt"
@@ -63,11 +62,11 @@ while True:
             #y2.append(binarize_vad(emotion_df.iloc[subject_id, trial_number * 4 - 2]))  # arousal
             #y3.append(binarize_vad(emotion_df.iloc[subject_id, trial_number * 4 - 1]))  # dominance
             #y4.append(emotion_df.iloc[subject_id, trial_number * 4])  # emotion label
-    print(trial_number)
     trial_number += 1
 
 # Convert lists to numpy arrays
 X = np.array(X)
+print(X.shape)
 np.save(os.path.join(os.path.dirname(__file__), "preprocessed_data.npy"), X)
 #y1 = np.array(y1)
 #y2 = np.array(y2)
