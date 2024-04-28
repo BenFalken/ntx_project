@@ -1,4 +1,9 @@
-# How to Collect Data (as of 3/1/24)
+# CruX @ UCLA EE-JAMS BCI
+This BCI binary-classifies emotions along the dimensions of valence, arousal, and dominance
+## Presentations
+* [California Neurotech Conference Slides](https://docs.google.com/presentation/d/1fPS0Ay2W_059HFDyExSL4MkaLow2HHIPaFNvYy6kt4Y/edit#slide=id.g2d056ab9231_1_1)
+## Reproducibility
+### How to Collect Data (as of 4/28/24)
 1. Have two computers (call them A and B)
 	1. This could all be done on 1 computer if yours is beefy enough
 2. Install PsychoPy on the [PsychoPy website](https://www.psychopy.org/download.html) if you haven't already
