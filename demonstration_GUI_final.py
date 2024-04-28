@@ -130,8 +130,6 @@ update_periodically(canvas)
 # Set up Matplotlib animation
 fig, ax = plt.subplots()
 ani = FuncAnimation(fig, animate, interval=3000)
-
-# Show Matplotlib plot in non-blocking mode
 plt.show(block=False)
 
 root.mainloop()
