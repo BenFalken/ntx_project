@@ -111,12 +111,12 @@ def update_dot(canvas, valence_clf, arousal_clf, dominance_clf):
     if dominance_clf == 0:
         draw_dot(canvas, "white", 525, 3* HEIGHT // 4)  # Bottom half of the screen
 
-def update_vad(valence_cf, arousal_cf, dominance_cf):
+def update_vad():
     global cumulative_valence, cumulative_arousal, cumulative_dominance
 
-    cumulative_valence += 1 if valence_cf == 1 else -1
-    cumulative_arousal += 1 if arousal_cf == 1 else -1
-    cumulative_dominance += 1 if dominance_cf == 1 else -1
+    cumulative_valence += 1 if valence_clf == 1 else -1
+    cumulative_arousal += 1 if arousal_clf == 1 else -1
+    cumulative_dominance += 1 if dominance_clf == 1 else -1
 
     valence_history.append(cumulative_valence)
     arousal_history.append(cumulative_arousal)
@@ -207,6 +207,7 @@ def pull_eeg_data():
             eeg_data.append([*sample])
             #print(timestamp, sample)
             if len(eeg_data) % clf_sample_len == 0:
+                global valence_clf, arousal_clf, dominance_clf
                 eeg_chunk = eeg_data[-750:]
                 eeg_chunk = np.array(eeg_chunk)
                 eeg_chunk = eeg_chunk.reshape(1, 8, 750)
@@ -221,7 +222,7 @@ def pull_eeg_data():
                 dominance_arr.append(dominance_clf)
                 print(valence_clf, arousal_clf, dominance_clf)
                 update_dot(canvas, valence_clf, arousal_clf, dominance_clf)
-                update_vad(valence_clf, arousal_clf, dominance_clf)
+                update_vad()
 
     except KeyboardInterrupt:
         with open('eeg_data_session1.csv', 'w', encoding='UTF8', newline='') as f:
