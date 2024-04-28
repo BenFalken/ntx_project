@@ -1,10 +1,27 @@
 import tkinter as tk
 import random
 import time
+import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
 
 RED = "red"
 GREEN = "green"
 WIDTH, HEIGHT = 1000, 500
+
+NUM_POINTS = (
+    20  # Number of points to display at a time (last 1 minute / 3 seconds per update)
+)
+
+# Initialize VAD tracking
+cumulative_valence = 0
+cumulative_arousal = 0
+cumulative_dominance = 0
+
+# Store history of updates to draw a line graph
+valence_history = [0] * NUM_POINTS
+arousal_history = [0] * NUM_POINTS
+dominance_history = [0] * NUM_POINTS
+
 
 # Function to draw the dot
 def draw_dot(canvas, color, x, y):
@@ -14,6 +31,36 @@ def draw_dot(canvas, color, x, y):
 # Function to generate random numbers
 def generate_number():
     return random.randint(0, 1)
+
+def update_vad():
+    global cumulative_valence, cumulative_arousal, cumulative_dominance
+    number = generate_number()
+    number1 = generate_number()
+    number2 = generate_number()
+
+    cumulative_valence += 1 if number == 1 else -1
+    cumulative_arousal += 1 if number1 == 1 else -1
+    cumulative_dominance += 1 if number2 == 1 else -1
+
+    valence_history.append(cumulative_valence)
+    arousal_history.append(cumulative_arousal)
+    dominance_history.append(cumulative_dominance)
+    del valence_history[0]
+    del arousal_history[0]
+    del dominance_history[0]
+
+def animate(i):
+    update_vad()
+    ax.clear()
+    ax.plot(valence_history, label="Valence", color="blue", alpha = 0.5)
+    ax.plot(arousal_history, label="Arousal", color="gray", alpha=0.5)
+    ax.plot(dominance_history, label="Dominance", color="red", alpha=0.5)
+    ax.legend(loc="upper left")
+    ax.set_ylim([-20, 20])  # Adjust based on expected range of VAD values
+    ax.set_title("Cumulative VAD over Time")
+    ax.set_ylabel("Cumulative Value")
+    ax.set_xlabel("Time (s)")
+
 
 def update_periodically(canvas):
     number = generate_number()
@@ -38,8 +85,13 @@ def update_dot(canvas, number, number1, number2):
     if number2 == 0:
         draw_dot(canvas, "white", 525, 3* HEIGHT // 4)  # Bottom half of the screen
 
+## Function to update the Tkinter canvas
+#def update_tkinter_canvas():
+#    update_vad()
+#    root.after(3000, update_tkinter_canvas)  # Update every 3 seconds
 
-# Create the main window
+
+# Create the main Tkinter window
 root = tk.Tk()
 root.title("Demonstration GUI")
 
@@ -73,8 +125,13 @@ low = tk.Label(root, text="LOW", fg="black", bg="white", font=("Consolas", 10))
 low.place(x=10, y=350)
 
 
-
-
 update_periodically(canvas)
+
+# Set up Matplotlib animation
+fig, ax = plt.subplots()
+ani = FuncAnimation(fig, animate, interval=3000)
+
+# Show Matplotlib plot in non-blocking mode
+plt.show(block=False)
 
 root.mainloop()

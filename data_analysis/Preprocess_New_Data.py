@@ -59,5 +59,4 @@ for i, chunks in enumerate(video_data):
 
 # Save the array
 print(X.shape)
-print(X)
 np.save(os.path.join(base_path, "preprocessed_data.npy"), X)

@@ -55,19 +55,20 @@ while True:
     for index, row in timestamps_df.iterrows():
         start_time, end_time = row
         chunk_mask = (eeg_df[22] >= start_time) & (eeg_df[22] <= end_time)
+        print(chunk_mask.any())
         chunk_data = eeg_df[chunk_mask].iloc[:N, :8].to_numpy()
         if chunk_data.shape[0] == N:  # Ensure we have a full 3-second chunk
             X.append(chunk_data)
-            #y1.append(binarize_vad(emotion_df.iloc[subject_id, trial_number * 4 - 3]))  # valence
-            #y2.append(binarize_vad(emotion_df.iloc[subject_id, trial_number * 4 - 2]))  # arousal
-            #y3.append(binarize_vad(emotion_df.iloc[subject_id, trial_number * 4 - 1]))  # dominance
-            #y4.append(emotion_df.iloc[subject_id, trial_number * 4])  # emotion label
+            #y1.append(binarize_vad(emotion_df.iloc[trial_number + 1, index * 11 - 3]))  # valence
+            #y2.append(binarize_vad(emotion_df.iloc[trial_number + 1, index * 11 - 2]))  # arousal
+            #y3.append(binarize_vad(emotion_df.iloc[trial_number + 1, index * 11 - 1]))  # dominance
+            #y4.append(emotion_df.iloc[trial_number + 1, trial_number * 11])  # emotion label
     trial_number += 1
 
 # Convert lists to numpy arrays
 X = np.array(X)
 print(X.shape)
-np.save(os.path.join(os.path.dirname(__file__), "preprocessed_data.npy"), X)
+np.save(os.path.join(os.path.dirname(__file__), "preprocessed_data0.npy"), X)
 #y1 = np.array(y1)
 #y2 = np.array(y2)
 #y3 = np.array(y3)
