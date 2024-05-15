@@ -11,7 +11,7 @@ cut_final = 5 * sampling_rate  # Cut the last 5 seconds
 
 # Paths
 base_path = os.path.dirname(__file__)
-eeg_data_folder = os.path.join(base_path, "eeg-data")
+eeg_data_folder = os.path.join(base_path, "eeg-data/SandraNewData")
 
 # Initialize a list for all video data
 video_data = []
@@ -59,4 +59,4 @@ for i, chunks in enumerate(video_data):
 
 # Save the array
 print(X.shape)
-np.save(os.path.join(base_path, "preprocessed_data.npy"), X)
+np.save(os.path.join(base_path, "preprocessed_data_Sandra.npy"), X)
