@@ -18,6 +18,8 @@ import time
 import threading
 from scipy import stats
 from scipy.stats import mode
+import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
 
 
 # ==========================
@@ -53,6 +55,7 @@ class CNN_LSTM2(nn.Module):
         return x
 
 os.chdir("C:/ntx_project/data_analysis")
+#os.chdir("/Users/ethan/Desktop/Code/CruX/ntx_project/data_analysis")
 cwd = os.getcwd()
 print(cwd)
 
@@ -73,6 +76,20 @@ dnet.load_state_dict(torch.load(cwd + '/dominance_net'))
 RED = "red"
 GREEN = "green"
 WIDTH, HEIGHT = 1000, 500
+NUM_POINTS = (
+    20  # Number of points to display at a time (last 1 minute / 3 seconds per update)
+)
+
+# Initialize VAD tracking
+cumulative_valence = 0
+cumulative_arousal = 0
+cumulative_dominance = 0
+
+# Store history of updates to draw a line graph
+valence_history = [0] * NUM_POINTS
+arousal_history = [0] * NUM_POINTS
+dominance_history = [0] * NUM_POINTS
+
 
 # Function to draw the dot
 def draw_dot(canvas, color, x, y):
@@ -93,6 +110,32 @@ def update_dot(canvas, valence_clf, arousal_clf, dominance_clf):
         draw_dot(canvas, "white", 525, HEIGHT // 4)  # Top half of the screen
     if dominance_clf == 0:
         draw_dot(canvas, "white", 525, 3* HEIGHT // 4)  # Bottom half of the screen
+
+def update_vad():
+    global cumulative_valence, cumulative_arousal, cumulative_dominance
+
+    cumulative_valence += 1 if valence_clf == 1 else -1
+    cumulative_arousal += 1 if arousal_clf == 1 else -1
+    cumulative_dominance += 1 if dominance_clf == 1 else -1
+
+    valence_history.append(cumulative_valence)
+    arousal_history.append(cumulative_arousal)
+    dominance_history.append(cumulative_dominance)
+    del valence_history[0]
+    del arousal_history[0]
+    del dominance_history[0]
+
+def animate(i):
+    update_vad()
+    ax.clear()
+    ax.plot(valence_history, label="Valence", color="blue", alpha=0.5)
+    ax.plot(arousal_history, label="Arousal", color="gray", alpha=0.5)
+    ax.plot(dominance_history, label="Dominance", color="red", alpha=0.5)
+    ax.legend(loc="upper left")
+    ax.set_ylim([-20, 20])  # Adjust based on expected range of VAD values
+    ax.set_title("Cumulative VAD over Time")
+    ax.set_ylabel("Cumulative Value")
+    ax.set_xlabel("Time (s)")
 
 
 # Create the main window
@@ -131,6 +174,11 @@ low.place(x=10, y=350)
 description = tk.Label(root, text="Valence:  Positivity/desirability of emotion\n\nArousal:  Intensity of emotion\n\nDominance:  Sense of control over emotion", fg="black", bg="white", anchor="w", justify="left", font=("Consolas", 11))
 description.place(x=620, y=200)
 
+# Set up Matplotlib animation
+fig, ax = plt.subplots()
+ani = FuncAnimation(fig, animate, interval=3000)
+plt.show(block=False)
+
 # =======================
 # EEG Pull LSL
 # =======================
@@ -159,6 +207,7 @@ def pull_eeg_data():
             eeg_data.append([*sample])
             #print(timestamp, sample)
             if len(eeg_data) % clf_sample_len == 0:
+                global valence_clf, arousal_clf, dominance_clf
                 eeg_chunk = eeg_data[-750:]
                 eeg_chunk = np.array(eeg_chunk)
                 eeg_chunk = eeg_chunk.reshape(1, 8, 750)
@@ -173,6 +222,7 @@ def pull_eeg_data():
                 dominance_arr.append(dominance_clf)
                 print(valence_clf, arousal_clf, dominance_clf)
                 update_dot(canvas, valence_clf, arousal_clf, dominance_clf)
+                update_vad()
 
     except KeyboardInterrupt:
         with open('eeg_data_session1.csv', 'w', encoding='UTF8', newline='') as f:
